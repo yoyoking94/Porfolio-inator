@@ -1,0 +1,13 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Cercle (tête) -->
+    <rect x="8" y="2" width="8" height="8" fill="currentColor" />
+    <!-- Corps -->
+    <rect x="7" y="11" width="10" height="2" fill="currentColor" />
+    <!-- Bras -->
+    <rect x="2" y="11" width="5" height="2" fill="currentColor" />
+    <rect x="17" y="11" width="5" height="2" fill="currentColor" />
+    <!-- Jambes -->
+    <rect x="7" y="13" width="2" height="8" fill="currentColor" />
+    <rect x="15" y="13" width="2" height="8" fill="currentColor" />
+</svg>
+  
