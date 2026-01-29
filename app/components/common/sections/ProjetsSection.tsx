@@ -1,3 +1,5 @@
+'use client';
+
 const ProjetsSection = () => {
     const projects = [
         {

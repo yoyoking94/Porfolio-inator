@@ -17,10 +17,10 @@ export interface WindowState {
 const INITIAL_WINDOWS: WindowState[] = [
     { id: 1, title: 'A PROPOS DE MOI', visible: true, zIndex: 5, width: 500, height: 400, isMinimized: false },
     { id: 2, title: 'PARCOURS', visible: false, zIndex: 2, width: 450, height: 350, isMinimized: false },
-    { id: 3, title: 'COMPETENCES', visible: false, zIndex: 3, width: 550, height: 380, isMinimized: false },
+    { id: 3, title: 'COMPETENCES', visible: false, zIndex: 3, width: 400, height: 300, isMinimized: false },
     { id: 4, title: 'PROJETS', visible: false, zIndex: 4, width: 600, height: 450, isMinimized: false },
-    { id: 5, title: 'CONTACT', visible: false, zIndex: 1, width: 400, height: 300, isMinimized: false },
-];
+    { id: 5, title: 'CONTACT', visible: false, zIndex: 1, width: 550, height: 380, isMinimized: false },
+  ];
 
 export const useWindowManager = () => {
     const [windows, setWindows] = useState<WindowState[]>(INITIAL_WINDOWS);
@@ -29,8 +29,9 @@ export const useWindowManager = () => {
     const [draggedWindowId, setDraggedWindowId] = useState<number | null>(null);
     const [showExpandHint, setShowExpandHint] = useState(false);
     const [screenSize, setScreenSize] = useState({
-        width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-        height: typeof window !== 'undefined' ? window.innerHeight : 800,
+        // IMPORTANT: keep SSR + first client render deterministic to avoid hydration mismatch.
+        width: 1200,
+        height: 800,
     });
 
     useLayoutEffect(() => {
@@ -41,6 +42,7 @@ export const useWindowManager = () => {
             });
         };
 
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);

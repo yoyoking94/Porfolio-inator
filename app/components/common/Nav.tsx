@@ -9,7 +9,7 @@ interface NavProps {
 const iconMap: Record<number, string> = {
   1: '/images/about.svg',
   2: '/images/parcours.svg',
-  3: '/images/compétences.svg',
+  3: '/images/competences.svg',
   4: '/images/projets.svg',
   5: '/images/contact.svg',
 };
@@ -45,6 +45,7 @@ const Nav: FC<NavProps> = ({ windows, onToggleWindow }) => {
             alt={window.title}
             width={32}
             height={32}
+            priority
           />
         </button>
       ))}
