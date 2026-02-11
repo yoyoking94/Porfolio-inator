@@ -30,14 +30,18 @@ const Nav: FC<NavProps> = ({ windows, onToggleWindow }) => {
       {windows.map((window) => (
         <button
           key={window.id}
-          onClick={() => onToggleWindow(window.id)}
+          onClick={() => {
+            if (!window.visible) {
+              onToggleWindow(window.id);
+            }
+          }}
           onKeyDown={(e) => handleKeyDown(e, window.id)}
           title={window.title}
           aria-label={`${window.visible ? 'Masquer' : 'Afficher'} ${window.title}`}
           aria-pressed={window.visible}
           className={`w-14 h-14 flex items-center justify-center border-2 border-black transition-colors ${window.visible
-              ? 'bg-white text-black hover:bg-gray-200'
-              : 'bg-gray-400 text-black hover:bg-gray-500'
+            ? 'bg-white text-black hover:bg-gray-200'
+            : 'bg-gray-400 text-black hover:bg-gray-500'
             } hoverable cursor-none focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2`}
         >
           <Image

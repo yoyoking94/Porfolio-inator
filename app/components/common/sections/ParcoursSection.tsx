@@ -1,4 +1,3 @@
-// app/components/common/sections/ParcoursSection.tsx
 'use client';
 
 import { useEffect, useState } from 'react';

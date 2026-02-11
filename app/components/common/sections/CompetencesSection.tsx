@@ -69,7 +69,7 @@ const CompetencesSection = () => {
                             {techniques.map((cat) => (
                                 <div key={cat.id} className="border-2 border-black p-2 bg-white">
                                     <h4 className="text-pixel-sm font-bold mb-2">{cat.categorie}</h4>
-                                    <div className="h-full">
+                                    <div className="h-full flex flex-wrap">
                                         {(cat.items || []).map((item) => (
                                             <div
                                                 key={item.id}

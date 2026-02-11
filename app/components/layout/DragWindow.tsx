@@ -1,9 +1,13 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+"use client";
+
 import { useRef, useState, useLayoutEffect, useCallback, useEffect } from 'react';
 
 export interface DragWindowProps {
   title: string;
   children: React.ReactNode;
   onClose?: () => void;
+  onMaximize?: () => void;
   onFocus?: () => void;
   onDragStart?: () => void;
   onDragMove?: (x: number, y: number) => void;
@@ -17,12 +21,14 @@ export interface DragWindowProps {
   isMinimized?: boolean;
   minWidth?: number;
   minHeight?: number;
+  isOpening?: boolean;
 }
 
 const DragWindow = ({
   title,
   children,
   onClose,
+  onMaximize,
   onFocus,
   onDragStart,
   onDragMove,
@@ -42,22 +48,16 @@ const DragWindow = ({
   const [dimensions, setDimensions] = useState({ width, height });
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
   const resizeStartRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 10);
+    setIsAnimating(true);
+    const timer = setTimeout(() => setIsAnimating(false), 300);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPosition({ x: initialX, y: initialY });
-    setDimensions({ width, height });
-  }, [initialX, initialY, width, height, isMinimized]);
 
   const constrainPosition = useCallback(
     (x: number, y: number) => {
@@ -71,55 +71,30 @@ const DragWindow = ({
     [dimensions.width, dimensions.height, maxY]
   );
 
-  const handleResizeStart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(true);
-    resizeStartRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      width: dimensions.width,
-      height: dimensions.height,
-    };
-    if (onFocus) onFocus();
-  };
-
-  const handleResizeMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isResizing) return;
-
-      const deltaX = e.clientX - resizeStartRef.current.x;
-      const deltaY = e.clientY - resizeStartRef.current.y;
-
-      const newWidth = Math.max(minWidth, resizeStartRef.current.width + deltaX);
-      const newHeight = Math.max(minHeight, resizeStartRef.current.height + deltaY);
-
-      const maxWidth = window.innerWidth - position.x;
-      const maxHeight = (maxY || window.innerHeight) - position.y;
-
-      setDimensions({
-        width: Math.min(newWidth, maxWidth),
-        height: Math.min(newHeight, maxHeight),
-      });
-    },
-    [isResizing, minWidth, minHeight, maxY, position.x, position.y]
-  );
-
-  const handleResizeEnd = useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
   useLayoutEffect(() => {
-    if (isDragging) {
+    if (isDragging || isResizing) {
       document.body.classList.add('dragging');
     } else {
       document.body.classList.remove('dragging');
     }
 
-    if (windowRef.current && !isVisible) {
-      windowRef.current.style.transform = `translate(${position.x}px, ${position.y}px) scale(0)`;
-    } else if (windowRef.current && isVisible) {
-      windowRef.current.style.transform = `translate(${position.x}px, ${position.y}px) scale(1)`;
+    if (windowRef.current) {
+      if (isClosing) {
+        windowRef.current.style.transform = `translate(${position.x}px, ${position.y}px) scale(0.8)`;
+        windowRef.current.style.opacity = '0';
+      } else if (isAnimating) {
+        windowRef.current.style.transform = `translate(${position.x}px, ${position.y}px) scale(0.8)`;
+        windowRef.current.style.opacity = '0';
+        requestAnimationFrame(() => {
+          if (windowRef.current) {
+            windowRef.current.style.transform = `translate(${position.x}px, ${position.y}px) scale(1)`;
+            windowRef.current.style.opacity = '1';
+          }
+        });
+      } else {
+        windowRef.current.style.transform = `translate(${position.x}px, ${position.y}px) scale(1)`;
+        windowRef.current.style.opacity = '1';
+      }
     }
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -135,7 +110,16 @@ const DragWindow = ({
         }
       }
       if (isResizing) {
-        handleResizeMove(e);
+        const deltaX = e.clientX - resizeStartRef.current.x;
+        const deltaY = e.clientY - resizeStartRef.current.y;
+        const newWidth = Math.max(minWidth, resizeStartRef.current.width + deltaX);
+        const newHeight = Math.max(minHeight, resizeStartRef.current.height + deltaY);
+        const maxWidth = window.innerWidth - position.x;
+        const maxHeight = (maxY || window.innerHeight) - position.y;
+        setDimensions({
+          width: Math.min(newWidth, maxWidth),
+          height: Math.min(newHeight, maxHeight),
+        });
       }
     };
 
@@ -151,7 +135,7 @@ const DragWindow = ({
         setIsDragging(false);
       }
       if (isResizing) {
-        handleResizeEnd();
+        setIsResizing(false);
       }
     };
 
@@ -168,17 +152,32 @@ const DragWindow = ({
   }, [
     isDragging,
     isResizing,
+    isClosing,
+    isAnimating,
     position.x,
     position.y,
-    isVisible,
     constrainPosition,
     dimensions.width,
     dimensions.height,
     onDragMove,
     onDragEnd,
-    handleResizeMove,
-    handleResizeEnd,
+    minWidth,
+    minHeight,
+    maxY,
   ]);
+
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    resizeStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      width: dimensions.width,
+      height: dimensions.height,
+    };
+    if (onFocus) onFocus();
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.window-title-bar')) {
@@ -193,6 +192,19 @@ const DragWindow = ({
     }
   };
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      if (onClose) onClose();
+    }, 250);
+  };
+
+  useLayoutEffect(() => {
+    setPosition({ x: initialX, y: initialY });
+    setDimensions({ width: width || 500, height: height || 300 });
+    setIsClosing(false);
+  }, [initialX, initialY, width, height]);
+
   return (
     <div
       ref={windowRef}
@@ -201,40 +213,54 @@ const DragWindow = ({
         width: `${dimensions.width}px`,
         height: `${dimensions.height}px`,
         zIndex,
-        willChange: 'transform',
-        transition: isDragging || isResizing ? 'none' : 'transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        willChange: 'transform, opacity',
+        transition: (isDragging || isResizing)
+          ? 'none'
+          : 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.3s ease-out',
         transformOrigin: 'center center',
       }}
       onMouseDown={handleMouseDown}
     >
-      {/* Barre de titre */}
       <div className="window-title-bar bg-black text-white px-4 py-2 flex justify-between items-center select-none cursor-none hoverable">
         <span className="font-bold text-sm">{title}</span>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="px-2 rounded transition-colors hoverable cursor-none"
-            aria-label="Fermer"
-          >
-            X
-          </button>
-        )}
+        <div className="flex gap-1">
+          {onMaximize && (
+            <button
+              onClick={onMaximize}
+              className="px-2 py-1 text-xs rounded transition-colors hover:bg-gray-700 hoverable cursor-none"
+              aria-label="Agrandir/Restaurer"
+            >
+              ☐
+            </button>
+          )}
+          {onClose && (
+            <button
+              onClick={handleClose}
+              className="px-2 py-1 text-xs rounded transition-colors hover:bg-gray-700 hoverable cursor-none"
+              aria-label="Fermer"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Contenu */}
       <div
         className="p-4 overflow-auto transition-opacity duration-300"
-        style={{ height: 'calc(100% - 40px)', opacity: isMinimized ? 0 : 1 }}
+        style={{
+          height: 'calc(100% - 40px)',
+          opacity: isMinimized ? 0 : 1
+        }}
       >
         {children}
       </div>
 
-      {/* Poignée de redimensionnement (coin bas-droit uniquement) */}
       {!isMinimized && (
         <div
-          className="absolute bottom-0 right-0 w-4 h-4 bg-black cursor-se-none z-10 hoverable"
+          className="absolute bottom-0 right-0 w-4 h-4 bg-black cursor-se-resize z-10 hoverable"
           onMouseDown={handleResizeStart}
           title="Redimensionner"
+          style={{ cursor: 'se-resize' }}
         />
       )}
     </div>

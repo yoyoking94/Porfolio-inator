@@ -1,57 +1,65 @@
 'use client';
-
+import { sendContactEmail } from '@/app/lib/sendEmail';
 import { useState } from 'react';
 
 const ContactSection = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState<{ success?: boolean; error?: string } | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Form submitted:', formData);
-        // Ajouter logique d'envoi (EmailJS, API, etc.)
+    const handleSubmit = async (formData: FormData) => {
+        setIsLoading(true);
+        setStatus(null);
+        const result = await sendContactEmail(formData);
+        setIsLoading(false);
+        setStatus(result);
     };
 
     return (
-        <section className="space-y-4">
-            <h2 className="text-pixel-lg">Contact</h2>
-            <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="p-4">
+            <h2 className="text-pixel-xl mb-4">Contact</h2>
+            <form action={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="text-pixel-sm block mb-1">Nom</label>
+                    <label className="block text-pixel-sm mb-1">Nom</label>
+                    <input name="name" className="w-full border-2 border-black px-2 py-1 text-pixel-sm" required />
+                </div>
+                <div>
+                    <label className="block text-pixel-sm mb-1">Email</label>
+                    <input name="email" type="email" className="w-full border-2 border-black px-2 py-1 text-pixel-sm" required />
+                </div>
+                <div>  {/* ← Nouveau champ Sujet */}
+                    <label className="block text-pixel-sm mb-1">Sujet</label>
                     <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        name="subject"
+                        placeholder="Ex: Candidature React, Question projet..."
                         className="w-full border-2 border-black px-2 py-1 text-pixel-sm"
                         required
+                        maxLength={100}
                     />
                 </div>
                 <div>
-                    <label className="text-pixel-sm block mb-1">Email</label>
-                    <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full border-2 border-black px-2 py-1 text-pixel-sm"
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="text-pixel-sm block mb-1">Message</label>
-                    <textarea
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full border-2 border-black px-2 py-1 text-pixel-sm h-24"
-                        required
-                    />
+                    <label className="block text-pixel-sm mb-1">Message</label>
+                    <textarea name="message" className="w-full border-2 border-black px-2 py-1 text-pixel-sm h-24" required />
                 </div>
                 <button
                     type="submit"
-                    className="bg-black text-white px-4 py-2 text-pixel-sm hover:bg-gray-800 transition-colors"
+                    disabled={isLoading}
+                    className="w-full bg-black text-white py-2 px-4 text-pixel-sm hover:bg-gray-800 transition-all"
                 >
-                    Envoyer
+                    {isLoading ? 'Envoi...' : 'Envoyer'}
                 </button>
             </form>
-        </section>
+            {status?.success && (
+                <p className="mt-4 p-4 border-2 border-green-500 bg-green-100 text-pixel-sm text-green-800">
+                    Merci ! Ton message m&apos;est bien parvenu. Je te réponds sous 48h.
+                </p>
+            )}
+            {status?.error && (
+                <p className="mt-4 p-4 border-2 border-red-500 bg-red-100 text-pixel-sm text-red-800">
+                    {status.error} (Essaie de rafraîchir la page)
+                </p>
+            )}
+
+        </div>
     );
 };
 

@@ -1,4 +1,3 @@
-// lib/db.ts
 import 'server-only';
 import { neon } from '@neondatabase/serverless';
 import type {
