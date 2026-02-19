@@ -23,6 +23,7 @@ export interface Formation {
     description: string | null;
     technologies: string | null;
     ordre: number;
+    cours: string;
 }
 
 export interface Experience {

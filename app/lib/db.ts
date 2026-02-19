@@ -1,17 +1,17 @@
 import 'server-only';
 import { neon } from '@neondatabase/serverless';
 import type {
-    Profil,
-    Formation,
-    Experience,
-    CompetenceTechnique,
-    CompetenceComportementale,
-    Langue,
-    CentreInteret
+  Profil,
+  Formation,
+  Experience,
+  CompetenceTechnique,
+  CompetenceComportementale,
+  Langue,
+  CentreInteret
 } from '../types/database';
 
 if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL manquant dans .env.local');
+  throw new Error('DATABASE_URL manquant dans .env.local');
 }
 
 export const sql = neon(process.env.DATABASE_URL);
@@ -20,18 +20,20 @@ export const sql = neon(process.env.DATABASE_URL);
 // PROFIL
 // ==========================================
 export async function getProfile(): Promise<Profil> {
-    const result = await sql`SELECT * FROM profil WHERE id = 1`;
-    return result[0] as Profil;
+  const result = await sql`SELECT * FROM profil WHERE id = 1`;
+  return result[0] as Profil;
 }
 
 // ==========================================
 // FORMATIONS
 // ==========================================
 export async function getFormations(): Promise<Formation[]> {
-    return await sql`
-    SELECT * FROM formations
-    WHERE profil_id = 1
-    ORDER BY ordre ASC
+  return await sql`
+      SELECT id, profil_id, etablissement, ville, diplome, date_debut, date_fin,
+             description, technologies, cours, ordre
+      FROM formations
+      WHERE profil_id = 1
+      ORDER BY ordre ASC
   ` as Formation[];
 }
 
@@ -39,7 +41,7 @@ export async function getFormations(): Promise<Formation[]> {
 // EXPÉRIENCES
 // ==========================================
 export async function getExperiences(): Promise<Experience[]> {
-    const result = await sql`
+  const result = await sql`
     SELECT 
       e.*,
       COALESCE(
@@ -59,14 +61,14 @@ export async function getExperiences(): Promise<Experience[]> {
     GROUP BY e.id
     ORDER BY e.ordre ASC
   `;
-    return result as Experience[];
+  return result as Experience[];
 }
 
 // ==========================================
 // COMPÉTENCES TECHNIQUES
 // ==========================================
 export async function getCompetencesTechniques(): Promise<CompetenceTechnique[]> {
-    const result = await sql`
+  const result = await sql`
     SELECT 
       ct.*,
       COALESCE(
@@ -87,14 +89,14 @@ export async function getCompetencesTechniques(): Promise<CompetenceTechnique[]>
     GROUP BY ct.id
     ORDER BY ct.ordre ASC
   `;
-    return result as CompetenceTechnique[];
+  return result as CompetenceTechnique[];
 }
 
 // ==========================================
 // COMPÉTENCES COMPORTEMENTALES
 // ==========================================
 export async function getCompetencesComportementales(): Promise<CompetenceComportementale[]> {
-    return await sql`
+  return await sql`
     SELECT * FROM competences_comportementales
     WHERE profil_id = 1
     ORDER BY ordre ASC
@@ -105,7 +107,7 @@ export async function getCompetencesComportementales(): Promise<CompetenceCompor
 // LANGUES
 // ==========================================
 export async function getLangues(): Promise<Langue[]> {
-    return await sql`
+  return await sql`
     SELECT * FROM langues
     WHERE profil_id = 1
     ORDER BY ordre ASC
@@ -116,7 +118,7 @@ export async function getLangues(): Promise<Langue[]> {
 // CENTRES D'INTÉRÊT
 // ==========================================
 export async function getCentresInteret(): Promise<CentreInteret[]> {
-    return await sql`
+  return await sql`
     SELECT * FROM centres_interet
     WHERE profil_id = 1
     ORDER BY ordre ASC
@@ -127,31 +129,31 @@ export async function getCentresInteret(): Promise<CentreInteret[]> {
 // FONCTION GLOBALE (récupère tout)
 // ==========================================
 export async function getAllPortfolioData() {
-    const [
-        profil,
-        formations,
-        experiences,
-        competences_techniques,
-        competences_comportementales,
-        langues,
-        centres_interet
-    ] = await Promise.all([
-        getProfile(),
-        getFormations(),
-        getExperiences(),
-        getCompetencesTechniques(),
-        getCompetencesComportementales(),
-        getLangues(),
-        getCentresInteret()
-    ]);
+  const [
+    profil,
+    formations,
+    experiences,
+    competences_techniques,
+    competences_comportementales,
+    langues,
+    centres_interet
+  ] = await Promise.all([
+    getProfile(),
+    getFormations(),
+    getExperiences(),
+    getCompetencesTechniques(),
+    getCompetencesComportementales(),
+    getLangues(),
+    getCentresInteret()
+  ]);
 
-    return {
-        profil,
-        formations,
-        experiences,
-        competences_techniques,
-        competences_comportementales,
-        langues,
-        centres_interet
-    };
+  return {
+    profil,
+    formations,
+    experiences,
+    competences_techniques,
+    competences_comportementales,
+    langues,
+    centres_interet
+  };
 }
