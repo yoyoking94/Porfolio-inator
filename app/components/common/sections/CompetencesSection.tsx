@@ -23,8 +23,8 @@ const CompetencesSection = () => {
             try {
                 setError(null);
                 const [techRes, compRes] = await Promise.all([
-                    fetch('/api/competences/techniquesRoute', { method: 'GET' }),
-                    fetch('/api/competences/comportementalesRoute', { method: 'GET' }),
+                    fetch('/api/db/techniques', { method: 'GET' }),
+                    fetch('/api/db/comportementales', { method: 'GET' }),
                 ]);
                 if (!techRes.ok) throw new Error(`Techniques HTTP ${techRes.status}`);
                 if (!compRes.ok) throw new Error(`Comportementales HTTP ${compRes.status}`);

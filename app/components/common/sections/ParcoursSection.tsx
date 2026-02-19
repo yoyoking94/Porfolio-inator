@@ -41,8 +41,8 @@ export default function ParcoursSection() {
       try {
         setError(null);
         const [formationsRes, experiencesRes] = await Promise.all([
-          fetch('/api/formationsRoute'),
-          fetch('/api/experiencesRoute'),
+          fetch('/api/db/formations'),
+          fetch('/api/db/experiences'),
         ]);
         if (!formationsRes.ok) throw new Error(`Formations HTTP ${formationsRes.status}`);
         if (!experiencesRes.ok) throw new Error(`Expériences HTTP ${experiencesRes.status}`);

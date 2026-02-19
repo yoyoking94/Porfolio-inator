@@ -22,7 +22,7 @@ export default function ProjetsSection() {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await fetch('../../../api/github');
+                const response = await fetch('/api/github');
                 if (!response.ok) throw new Error('Erreur lors de la récupération des projets');
                 const data = await response.json();
                 setProjects(data);
