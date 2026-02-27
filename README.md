@@ -4,6 +4,7 @@ Portfolio-inator est mon portfolio professionnel de fin d'études Master Expert 
 
 
 Les objectifs, le contexte, l’enjeu et les risques:
+
 Ce projet était mon travail de fin d'études Master ISCOD Paris (2024-2026), avec pour objectif de démontrer ma capacité à concevoir, développer et déployer une application full-stack professionnelle de A à Z. Le contexte était compétitif : me démarquer des 500+ alternants frontend avec un portfolio technique PROUVANT mes compétences (TypeScript, SQL, Next.js, architecture logicielle) plutôt qu'une simple liste de buzzwords. L'enjeu était existential : réussite académique + positionnement pro direct (première alternance Master 2). Les risques étaient critiques : retard planning = échec diplôme, stack trop ambitieuse = projet inachevé, rendu amateur = zéro entretien RH, base de données mal conçue = crash fréquent.
 
 Les étapes – ce que j’ai fait:
