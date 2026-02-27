@@ -1,26 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #000000;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Press Start 2P", monospace !important;
+}
+
+/*
+  @layer base = styles appliqués sur les balises HTML brutes.
+  Tailwind ne les écrasera pas.
+  Toutes les tailles sont des multiples de 8px
+  car Press Start 2P est une police bitmap (pixel art).
+*/
+@layer base {
+
+  h1 {
+    font-size: 2rem;
+    /* 32px */
+    line-height: 3rem;
+    /* 48px */
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    /* 24px */
+    line-height: 2.5rem;
+    /* 40px */
+  }
+
+  h3 {
+    font-size: 1rem;
+    /* 16px */
+    line-height: 2rem;
+    /* 32px */
+  }
+
+  h4 {
+    font-size: 0.75rem;
+    /* 12px */
+    line-height: 1.5rem;
+    /* 24px */
+  }
+
+  h5 {
+    font-size: 0.625rem;
+    /* 10px */
+    line-height: 1.25rem;
+    /* 20px */
+  }
+
+  h6 {
+    font-size: 0.5rem;
+    /* 8px — taille minimale lisible */
+    line-height: 1rem;
+    /* 16px */
+  }
+
+  p {
+    font-size: 0.5rem;
+    /* 8px */
+    line-height: 1.25rem;
+    /* 20px — interligne généreux pour la lisibilité */
+  }
+
+  a {
+    font-size: inherit;
+    /* Hérite de son parent */
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  a:hover {
+    background: var(--foreground);
+    color: var(--background);
+  }
+
+  i,
+  em {
+    font-size: inherit;
+    /* Hérite de son parent */
+    font-style: normal;
+    /* Press Start 2P n'a pas de variante italique */
+    text-decoration: underline dotted;
+    /* On simule l'emphase autrement */
+  }
+
+  strong,
+  b {
+    font-size: inherit;
+    /* Press Start 2P n'a pas de variante bold — on simule avec un contour */
+    text-shadow: 1px 0px 0px var(--foreground);
+  }
+
+  small {
+    font-size: 0.5rem;
+    /* 8px — taille minimale */
+    line-height: 1rem;
+  }
+
+  ul,
+  ol {
+    font-size: 0.5rem;
+    /* 8px */
+    line-height: 1.5rem;
+    /* 24px */
+    padding: 1.5rem;
+  }
+
+  li {
+    font-size: inherit;
+    line-height: 1.5rem;
+  }
+
+  label {
+    font-size: 0.5rem;
+    /* 8px */
+    line-height: 1rem;
+  }
+
+  input,
+  textarea {
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.5rem;
+    /* 8px */
+    line-height: 1rem;
+  }
+
+  button {
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.5rem;
+    /* 8px */
+  }
 }
