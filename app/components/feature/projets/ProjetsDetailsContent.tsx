@@ -28,8 +28,8 @@ const README_SECTIONS: ReadmeSection[] = [
 ];
 
 const PROJECT_TO_COMPETENCES: Record<string, { techniques: string[]; comportementales: string[] }> = {
-    "finance-inator": {
-        techniques: ["JavaScript"],
+    "log-inator": {
+        techniques: ["JavaScript", "NoSQL"],
         comportementales: ["Planification", "Priorisation"],
     },
     "fitness-inator": {
@@ -41,7 +41,7 @@ const PROJECT_TO_COMPETENCES: Record<string, { techniques: string[]; comportemen
         comportementales: ["Discipline"],
     },
     "porfolio-inator": {
-        techniques: ["SQL"],
+        techniques: ["TypeScript","SQL"],
         comportementales: ["Adaptabilité"],
     },
     "diet-inator": {

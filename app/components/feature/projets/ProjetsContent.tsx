@@ -7,7 +7,7 @@ import type { GitHubRepo, CompetenceTechnique, CompetenceComportementale } from 
 const TWO_COLUMN_BREAKPOINT_IN_PIXELS = 500;
 
 const FEATURED_REPO_NAMES = [
-    "finance-inator",
+    "log-inator",
     "fitness-inator",
     "password-inator-2",
     "porfolio-inator",

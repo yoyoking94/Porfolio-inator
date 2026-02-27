@@ -31,18 +31,18 @@ function parseReadme(rawMarkdown: string): ReadmeContent {
         regard_critique: null,
     };
 
-    // Découpe par titres H2
-    const sectionRegex = /^##\s+(.+)$/gm;
+    // Prépare les expressions régulières pour repérer les sections textuelles
+    const sectionRegex = /(?<=\n|^)(La présentation[\s\S]*?:|Les objectifs[\s\S]*?:|Les étapes[\s\S]*?:|Les acteurs[\s\S]*?:|Les résultats[\s\S]*?:|Les lendemains[\s\S]*?:|Mon regard critique[\s\S]*?:)/gi;
+
     const matches = [...rawMarkdown.matchAll(sectionRegex)];
 
     for (let i = 0; i < matches.length; i++) {
         const match = matches[i];
-        const sectionTitle = match[1].toLowerCase().trim();
+        const sectionTitle = match[0].toLowerCase().trim();
         const sectionStart = (match.index ?? 0) + match[0].length;
         const sectionEnd = matches[i + 1]?.index ?? rawMarkdown.length;
         const sectionContent = rawMarkdown.slice(sectionStart, sectionEnd).trim();
 
-        // Cherche quelle clé correspond à ce titre
         for (const [key, keywords] of Object.entries(README_SECTION_MAP)) {
             if (keywords.some((keyword) => sectionTitle.includes(keyword))) {
                 result[key as keyof ReadmeContent] = sectionContent || null;
@@ -53,6 +53,7 @@ function parseReadme(rawMarkdown: string): ReadmeContent {
 
     return result;
 }
+
 
 async function fetchReadme(
     username: string,
